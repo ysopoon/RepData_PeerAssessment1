@@ -274,7 +274,8 @@ newmedian
 
 ```r
 # make another new copy of the dataset(the one with cleaning the NAs)
-new2data <- subdata
+new2data <- newdata
+new2data$date <- as.Date(new2data$date, "%Y-%m-%d")
 
 # find out the weekdays of that date
 new2data <- cbind(new2data, weekday = weekdays(new2data$date, abbreviate = TRUE))
@@ -295,12 +296,12 @@ summary(new2data)
 
 ```
 ##      steps            date               interval       weekday     
-##  Min.   :  0.0   Min.   :2012-10-02   Min.   :   0   Weekday:11232  
-##  1st Qu.:  0.0   1st Qu.:2012-10-16   1st Qu.: 589   Weekend: 4032  
-##  Median :  0.0   Median :2012-10-29   Median :1178                  
-##  Mean   : 37.4   Mean   :2012-10-30   Mean   :1178                  
-##  3rd Qu.: 12.0   3rd Qu.:2012-11-16   3rd Qu.:1766                  
-##  Max.   :806.0   Max.   :2012-11-29   Max.   :2355
+##  Min.   :  0.0   Min.   :2012-10-01   Min.   :   0   Weekday:12960  
+##  1st Qu.:  0.0   1st Qu.:2012-10-16   1st Qu.: 589   Weekend: 4608  
+##  Median :  0.0   Median :2012-10-31   Median :1178                  
+##  Mean   : 35.7   Mean   :2012-10-31   Mean   :1178                  
+##  3rd Qu.: 24.0   3rd Qu.:2012-11-15   3rd Qu.:1766                  
+##  Max.   :806.0   Max.   :2012-11-30   Max.   :2355
 ```
 
 
@@ -308,21 +309,14 @@ summary(new2data)
 
 ```r
 # find the mean steps taken for each interval
-
-weekday <- new2data[new2data$weekday == "Weekday",]
-weekend <- new2data[new2data$weekday == "Weekend",]
-
-newaverage1 <- sapply(split(weekday, weekday$interval), function(x){ mean(x$steps)})
-newaverage2 <- sapply(split(weekend, weekend$interval), function(x){ mean(x$steps)})
-
-newave <- cbind("Weekday" = newaverage1, "Weekend" = newaverage2)
+library(plyr)
+cleandata <- ddply(new2data, c("weekday", "interval"), function(x){ mean(x$steps)})
+names(cleandata) <- c("weekday", "interval", "mean_steps")
 
 # graph the time series plot
 library(lattice)
-par(mfrow = c(2,1))
-plot(newave , type = "l"
-     , main = "average steps taken vs 5-min interval", 
-     xlab = "5-min interval", ylab = "average steps taken")
+xyplot(cleandata$mean_steps ~ cleandata$interval | factor(cleandata$weekday)
+       , type = "l", layout = c(1,2), xlab = "interval", ylab = "Number of steps")
 ```
 
 ![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-11.png) 

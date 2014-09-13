@@ -136,7 +136,8 @@ newmedian
 ```{r}
 
 # make another new copy of the dataset(the one with cleaning the NAs)
-new2data <- subdata
+new2data <- newdata
+new2data$date <- as.Date(new2data$date, "%Y-%m-%d")
 
 # find out the weekdays of that date
 new2data <- cbind(new2data, weekday = weekdays(new2data$date, abbreviate = TRUE))
@@ -162,20 +163,13 @@ summary(new2data)
 ```{r}
 
 # find the mean steps taken for each interval
-
-weekday <- new2data[new2data$weekday == "Weekday",]
-weekend <- new2data[new2data$weekday == "Weekend",]
-
-newaverage1 <- sapply(split(weekday, weekday$interval), function(x){ mean(x$steps)})
-newaverage2 <- sapply(split(weekend, weekend$interval), function(x){ mean(x$steps)})
-
-newave <- cbind("Weekday" = newaverage1, "Weekend" = newaverage2)
+library(plyr)
+cleandata <- ddply(new2data, c("weekday", "interval"), function(x){ mean(x$steps)})
+names(cleandata) <- c("weekday", "interval", "mean_steps")
 
 # graph the time series plot
 library(lattice)
-par(mfrow = c(2,1))
-plot(newave , type = "l"
-     , main = "average steps taken vs 5-min interval", 
-     xlab = "5-min interval", ylab = "average steps taken")
+xyplot(cleandata$mean_steps ~ cleandata$interval | factor(cleandata$weekday)
+       , type = "l", layout = c(1,2), xlab = "interval", ylab = "Number of steps")
 
 ```
