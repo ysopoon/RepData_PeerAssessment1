@@ -150,7 +150,8 @@ plot(average, type = &quot;l&quot;, main = &quot;average steps taken vs 5-min in
 <ol start="2" style="list-style-type: decimal">
 <li>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</li>
 </ol>
-<pre class="r"><code>average[average == max(average)]</code></pre>
+<pre class="r"><code># find out the max value in average
+average[average == max(average)]</code></pre>
 <pre><code>##   835 
 ## 206.2</code></pre>
 </div>
@@ -171,8 +172,9 @@ summary(data)</code></pre>
 ##  NA's   :2304    (Other)   :15840</code></pre>
 <pre><code>So we know that there are 2304 rows with NAs.</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</li>
-<li>Create a new dataset that is equal to the original dataset but with the missing data filled in.</li>
+<li><p>Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</p>
+<p>To fill all of the missing values in the dataset, we will use the mean for that day if it exists, if there is no mean for that day (for the date 2012-11-30, there are only NAs for this date ), we will fill 0.</p></li>
+<li><p>Create a new dataset that is equal to the original dataset but with the missing data filled in.</p></li>
 </ol>
 <pre class="r"><code># copy the dataset
 newdata &lt;- data
@@ -268,7 +270,7 @@ newmedian</code></pre>
 <ol style="list-style-type: decimal">
 <li>Create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</li>
 </ol>
-<pre class="r"><code># make another new copy of the dataset(the one with cleaning the NAs)
+<pre class="r"><code># make another new copy of the dataset(the one with filling the NAs)
 new2data &lt;- newdata
 new2data$date &lt;- as.Date(new2data$date, &quot;%Y-%m-%d&quot;)
 
