@@ -44,63 +44,33 @@ str(subdata)
 sum <- sapply(split(subdata, subdata$date), function(x){ sum(x$steps)})
 
 # graph the histogram using barplot
-barplot(sum, main = "Total steps each day", xlab = "date", ylab = "total steps")
+h <- hist(sum, breaks = 20)
 ```
 
 ![plot of chunk unnamed-chunk-3](./PA1_template_files/figure-html/unnamed-chunk-3.png) 
 
+```r
+##barplot(sum, main = "Total steps each day", xlab = "date", ylab = "total steps")
+```
+
 2. Calculate and report the mean and median total number of steps taken per day
 
 ```r
-mean <- sapply(split(subdata, subdata$date), function(x){ mean(x$steps)})
+mean <- mean(sum)
 mean
 ```
 
 ```
-## 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 2012-10-07 
-##     0.4375    39.4167    42.0694    46.1597    53.5417    38.2465 
-## 2012-10-09 2012-10-10 2012-10-11 2012-10-12 2012-10-13 2012-10-14 
-##    44.4826    34.3750    35.7778    60.3542    43.1458    52.4236 
-## 2012-10-15 2012-10-16 2012-10-17 2012-10-18 2012-10-19 2012-10-20 
-##    35.2049    52.3750    46.7083    34.9167    41.0729    36.0938 
-## 2012-10-21 2012-10-22 2012-10-23 2012-10-24 2012-10-25 2012-10-26 
-##    30.6285    46.7361    30.9653    29.0104     8.6528    23.5347 
-## 2012-10-27 2012-10-28 2012-10-29 2012-10-30 2012-10-31 2012-11-02 
-##    35.1354    39.7847    17.4236    34.0938    53.5208    36.8056 
-## 2012-11-03 2012-11-05 2012-11-06 2012-11-07 2012-11-08 2012-11-11 
-##    36.7049    36.2465    28.9375    44.7326    11.1771    43.7778 
-## 2012-11-12 2012-11-13 2012-11-15 2012-11-16 2012-11-17 2012-11-18 
-##    37.3785    25.4722     0.1424    18.8924    49.7882    52.4653 
-## 2012-11-19 2012-11-20 2012-11-21 2012-11-22 2012-11-23 2012-11-24 
-##    30.6979    15.5278    44.3993    70.9271    73.5903    50.2708 
-## 2012-11-25 2012-11-26 2012-11-27 2012-11-28 2012-11-29 
-##    41.0903    38.7569    47.3819    35.3576    24.4688
+## [1] 10766
 ```
 
 ```r
-median <- sapply(split(subdata, subdata$date), function(x){ median(x$steps)})
+median <- median(sum)
 median
 ```
 
 ```
-## 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 2012-10-07 
-##          0          0          0          0          0          0 
-## 2012-10-09 2012-10-10 2012-10-11 2012-10-12 2012-10-13 2012-10-14 
-##          0          0          0          0          0          0 
-## 2012-10-15 2012-10-16 2012-10-17 2012-10-18 2012-10-19 2012-10-20 
-##          0          0          0          0          0          0 
-## 2012-10-21 2012-10-22 2012-10-23 2012-10-24 2012-10-25 2012-10-26 
-##          0          0          0          0          0          0 
-## 2012-10-27 2012-10-28 2012-10-29 2012-10-30 2012-10-31 2012-11-02 
-##          0          0          0          0          0          0 
-## 2012-11-03 2012-11-05 2012-11-06 2012-11-07 2012-11-08 2012-11-11 
-##          0          0          0          0          0          0 
-## 2012-11-12 2012-11-13 2012-11-15 2012-11-16 2012-11-17 2012-11-18 
-##          0          0          0          0          0          0 
-## 2012-11-19 2012-11-20 2012-11-21 2012-11-22 2012-11-23 2012-11-24 
-##          0          0          0          0          0          0 
-## 2012-11-25 2012-11-26 2012-11-27 2012-11-28 2012-11-29 
-##          0          0          0          0          0
+## [1] 10765
 ```
 ## What is the average daily activity pattern?
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -165,14 +135,17 @@ summary(data)
 # copy the dataset
 newdata <- data
 
+mean_day <- sapply(split(subdata, subdata$date), function(x){ mean(x$steps)})
+
 # fill in missing data for the copy dataset
 for(i in 1:length(NAvalue)){
     if(NAvalue[i] == TRUE){
         # replace the NAs with the mean for that day if exits, else replace with 0 
         name <- newdata$date[i]
-        if(!is.na(unname(mean[name]))){
-            newdata$steps[i] <- unname(mean[name])
+        if(!is.na(unname(mean_day[name]))){
+            newdata$steps[i] <- unname(mean_day[name])
         } else newdata$steps[i] <- 0 
+#         newdata$steps[i] <- mean
     } #end of if     
 } # end of for
 
@@ -199,78 +172,43 @@ summary(newdata)
 # find the total steps taken each day
 newsum <- sapply(split(newdata, newdata$date), function(x){ sum(x$steps)})
 
-# graph the histogram using barplot
-barplot(newsum, col = "red", main = "Total steps each day", xlab = "date", ylab = "total steps")
+# graph the histogram
+nh <- hist(newsum, breaks = 20, col = rgb(0,0,1,1/4)) #the new data is in blue
 ```
 
 ![plot of chunk unnamed-chunk-9](./PA1_template_files/figure-html/unnamed-chunk-9.png) 
 
 ```r
-# # add the histogram of the priviouse total using transparent black for comparing
-# par(new = TRUE)
-# barplot(sum, col = rgb(0,0,0,alpha=0.3), names.arg = "")
-
 # get the new mean for each day
-newmean <- sapply(split(newdata, newdata$date), function(x){ mean(x$steps)})
+newmean <- mean(newsum)
 newmean
 ```
 
 ```
-## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
-##     0.4375     0.4375    39.4167    42.0694    46.1597    53.5417 
-## 2012-10-07 2012-10-08 2012-10-09 2012-10-10 2012-10-11 2012-10-12 
-##    38.2465    34.3750    44.4826    34.3750    35.7778    60.3542 
-## 2012-10-13 2012-10-14 2012-10-15 2012-10-16 2012-10-17 2012-10-18 
-##    43.1458    52.4236    35.2049    52.3750    46.7083    34.9167 
-## 2012-10-19 2012-10-20 2012-10-21 2012-10-22 2012-10-23 2012-10-24 
-##    41.0729    36.0938    30.6285    46.7361    30.9653    29.0104 
-## 2012-10-25 2012-10-26 2012-10-27 2012-10-28 2012-10-29 2012-10-30 
-##     8.6528    23.5347    35.1354    39.7847    17.4236    34.0938 
-## 2012-10-31 2012-11-01 2012-11-02 2012-11-03 2012-11-04 2012-11-05 
-##    53.5208    36.2465    36.8056    36.7049    11.1771    36.2465 
-## 2012-11-06 2012-11-07 2012-11-08 2012-11-09 2012-11-10 2012-11-11 
-##    28.9375    44.7326    11.1771    18.8924    49.7882    43.7778 
-## 2012-11-12 2012-11-13 2012-11-14 2012-11-15 2012-11-16 2012-11-17 
-##    37.3785    25.4722    44.3993     0.1424    18.8924    49.7882 
-## 2012-11-18 2012-11-19 2012-11-20 2012-11-21 2012-11-22 2012-11-23 
-##    52.4653    30.6979    15.5278    44.3993    70.9271    73.5903 
-## 2012-11-24 2012-11-25 2012-11-26 2012-11-27 2012-11-28 2012-11-29 
-##    50.2708    41.0903    38.7569    47.3819    35.3576    24.4688 
-## 2012-11-30 
-##     0.0000
+## [1] 10276
 ```
 
 ```r
 # get the new median for each day
-newmedian <- sapply(split(newdata, newdata$date), function(x){ median(x$steps)})
+newmedian <- median(newsum)
 newmedian
 ```
 
 ```
-## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
-##     0.4375     0.0000     0.0000     0.0000     0.0000     0.0000 
-## 2012-10-07 2012-10-08 2012-10-09 2012-10-10 2012-10-11 2012-10-12 
-##     0.0000    34.3750     0.0000     0.0000     0.0000     0.0000 
-## 2012-10-13 2012-10-14 2012-10-15 2012-10-16 2012-10-17 2012-10-18 
-##     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000 
-## 2012-10-19 2012-10-20 2012-10-21 2012-10-22 2012-10-23 2012-10-24 
-##     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000 
-## 2012-10-25 2012-10-26 2012-10-27 2012-10-28 2012-10-29 2012-10-30 
-##     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000 
-## 2012-10-31 2012-11-01 2012-11-02 2012-11-03 2012-11-04 2012-11-05 
-##     0.0000    36.2465     0.0000     0.0000    11.1771     0.0000 
-## 2012-11-06 2012-11-07 2012-11-08 2012-11-09 2012-11-10 2012-11-11 
-##     0.0000     0.0000     0.0000    18.8924    49.7882     0.0000 
-## 2012-11-12 2012-11-13 2012-11-14 2012-11-15 2012-11-16 2012-11-17 
-##     0.0000     0.0000    44.3993     0.0000     0.0000     0.0000 
-## 2012-11-18 2012-11-19 2012-11-20 2012-11-21 2012-11-22 2012-11-23 
-##     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000 
-## 2012-11-24 2012-11-25 2012-11-26 2012-11-27 2012-11-28 2012-11-29 
-##     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000 
-## 2012-11-30 
-##     0.0000
+## [1] 10571
 ```
-    We can see that after replacing the NAs with the mean for that day, the total steps, mean and median for each day change. For the total steps and mean, these values may be increased or decreased; for the median, all values increases. 
+    We can see that after replacing the NAs with the mean for that day, the mean and the median derease.
+    
+    
+
+```r
+plot(nh, col = rgb(0,0,1,1/4)) # the new data is in blue
+plot(h, col=rgb(1,0,0,1/4), add = T) #the original data is in red
+```
+
+![plot of chunk unnamed-chunk-10](./PA1_template_files/figure-html/unnamed-chunk-10.png) 
+Compare the historgrams, we can see that the total daily number of steps decrease after we input the missin data. 
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
@@ -323,4 +261,4 @@ xyplot(cleandata$mean_steps ~ cleandata$interval | factor(cleandata$weekday)
        , type = "l", layout = c(1,2), xlab = "interval", ylab = "Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-11](./PA1_template_files/figure-html/unnamed-chunk-11.png) 
+![plot of chunk unnamed-chunk-12](./PA1_template_files/figure-html/unnamed-chunk-12.png) 

@@ -36,17 +36,20 @@ str(subdata)
 sum <- sapply(split(subdata, subdata$date), function(x){ sum(x$steps)})
 
 # graph the histogram using barplot
-barplot(sum, main = "Total steps each day", xlab = "date", ylab = "total steps")
+h <- hist(sum, breaks = 20)
+
+##barplot(sum, main = "Total steps each day", xlab = "date", ylab = "total steps")
 
 ```
 
 2. Calculate and report the mean and median total number of steps taken per day
 ```{r}
-mean <- sapply(split(subdata, subdata$date), function(x){ mean(x$steps)})
+mean <- mean(sum)
 mean
 
-median <- sapply(split(subdata, subdata$date), function(x){ median(x$steps)})
+median <- median(sum)
 median
+
 ```
 ## What is the average daily activity pattern?
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -93,14 +96,17 @@ summary(data)
 # copy the dataset
 newdata <- data
 
+mean_day <- sapply(split(subdata, subdata$date), function(x){ mean(x$steps)})
+
 # fill in missing data for the copy dataset
 for(i in 1:length(NAvalue)){
     if(NAvalue[i] == TRUE){
         # replace the NAs with the mean for that day if exits, else replace with 0 
         name <- newdata$date[i]
-        if(!is.na(unname(mean[name]))){
-            newdata$steps[i] <- unname(mean[name])
+        if(!is.na(unname(mean_day[name]))){
+            newdata$steps[i] <- unname(mean_day[name])
         } else newdata$steps[i] <- 0 
+#         newdata$steps[i] <- mean
     } #end of if     
 } # end of for
 
@@ -117,22 +123,28 @@ summary(newdata)
 # find the total steps taken each day
 newsum <- sapply(split(newdata, newdata$date), function(x){ sum(x$steps)})
 
-# graph the histogram using barplot
-barplot(newsum, col = "red", main = "Total steps each day", xlab = "date", ylab = "total steps")
-# # add the histogram of the priviouse total using transparent black for comparing
-# par(new = TRUE)
-# barplot(sum, col = rgb(0,0,0,alpha=0.3), names.arg = "")
+# graph the histogram
+nh <- hist(newsum, breaks = 20, col = rgb(0,0,1,1/4)) #the new data is in blue
 
 # get the new mean for each day
-newmean <- sapply(split(newdata, newdata$date), function(x){ mean(x$steps)})
+newmean <- mean(newsum)
 newmean
 
 # get the new median for each day
-newmedian <- sapply(split(newdata, newdata$date), function(x){ median(x$steps)})
+newmedian <- median(newsum)
 newmedian
 
 ```
-    We can see that after replacing the NAs with the mean for that day, the total steps, mean and median for each day change. For the total steps and mean, these values may be increased or decreased; for the median, all values increases. 
+    We can see that after replacing the NAs with the mean for that day, the mean and the median derease.
+    
+    
+```{r}
+plot(nh, col = rgb(0,0,1,1/4)) # the new data is in blue
+plot(h, col=rgb(1,0,0,1/4), add = T) #the original data is in red
+
+```
+Compare the historgrams, we can see that the total daily number of steps decrease after we input the missin data. 
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
