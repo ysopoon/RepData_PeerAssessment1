@@ -143,6 +143,7 @@ plot(nh, col = rgb(0,0,1,1/4)) # the new data is in blue
 plot(h, col=rgb(1,0,0,1/4), add = T) #the original data is in red
 
 ```
+
 Compare the historgrams, we can see that the total daily number of steps decrease after we input the missin data. 
 
 

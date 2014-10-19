@@ -207,6 +207,7 @@ plot(h, col=rgb(1,0,0,1/4), add = T) #the original data is in red
 ```
 
 ![plot of chunk unnamed-chunk-10](./PA1_template_files/figure-html/unnamed-chunk-10.png) 
+
 Compare the historgrams, we can see that the total daily number of steps decrease after we input the missin data. 
 
 
